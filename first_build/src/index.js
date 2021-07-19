@@ -1,3 +1,3 @@
-const sayHi = 'Hello'
+const sayHi = "Hello"
 
-console.log(sayHi);
+console.log(sayHi)
