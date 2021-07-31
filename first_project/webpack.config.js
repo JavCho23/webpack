@@ -2,12 +2,14 @@ const path = require("path")
 const HTMLWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const TerserPlugin = require("terser-webpack-plugin")
 
 module.exports = {
     entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, "./dist"),
-        filename: "main.js",
+        filename: "[name].[contenthash].js",
         assetModuleFilename: "assets/images/[hash][ext][query]",
     },
     resolve: {
@@ -41,7 +43,7 @@ module.exports = {
                     options: {
                         limit: 10000,
                         mimetype: "application/font-woff",
-                        name: "[name].[ext]",
+                        name: "[name].[contenthash].[ext]",
                         outputPath: "./assets/fonts/",
                         publicPath: "../assets/fonts/",
                         esModule: false,
@@ -56,7 +58,9 @@ module.exports = {
             template: "./public/index.html",
             filename: "./index.html",
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "assets/[name].[contenthash].css",
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -67,4 +71,8 @@ module.exports = {
             ],
         }),
     ],
+    optimization: {
+        minimize: true,
+        minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
+    },
 }
